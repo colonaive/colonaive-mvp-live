@@ -166,6 +166,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
   async function signOut() {
     try {
       console.log('[AuthContext] Signing out user')
+      
+      // Clear all local storage data
+      localStorage.clear()
+      
+      // Clear all session storage
+      sessionStorage.clear()
+      
+      // Sign out from Supabase
       const { error } = await authApi.signOut()
       
       if (error) {
@@ -173,10 +181,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
         return { success: false, error: error.message }
       }
       
-      // Clear state regardless of success to ensure UI updates
+      // Clear React state
       setUser(null)
       setProfile(null)
-      console.log('[AuthContext] Sign out successful')
+      setLoading(false)
+      
+      console.log('[AuthContext] Sign out successful, all data cleared')
+      
+      // Reload the page to ensure clean state
+      window.location.href = '/login'
       
       return { success: true }
     } catch (error: any) {
@@ -184,6 +197,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Force clear state even if signOut fails
       setUser(null)
       setProfile(null)
+      localStorage.clear()
+      sessionStorage.clear()
+      window.location.href = '/login'
       return { success: false, error: error.message || 'An unexpected error occurred' }
     }
   }

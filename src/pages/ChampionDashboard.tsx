@@ -75,7 +75,7 @@ const roleConfig: Record<string, any> = {
 };
 
 const ChampionDashboard: React.FC = () => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const role = roleConfig[searchParams.get("role") || "citizen"] ? searchParams.get("role") || "citizen" : "citizen";
@@ -89,10 +89,20 @@ const ChampionDashboard: React.FC = () => {
       setError(null); 
       
       try {
-        console.log("[ChampionDashboard] Fetching stats for user:", user?.id);
+        console.log("[ChampionDashboard] Loading dashboard:", {
+          userId: user?.id,
+          hasProfile: !!profile,
+          profileType: profile?.user_type,
+          role
+        });
         
         if (!user) {
           throw new Error('User not authenticated.');
+        }
+
+        if (!profile) {
+          console.warn("[ChampionDashboard] No profile found for user");
+          throw new Error('User profile not found. Please try logging out and back in.');
         }
         
         // Try to fetch user stats - with error handling if columns don't exist

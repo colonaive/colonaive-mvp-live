@@ -2,6 +2,8 @@ import { createClient } from '@supabase/supabase-js'
 // Your ACTUAL Supabase project credentials 
 const supabaseUrl = 'https://irkfrlvddkyjziuvrisb.supabase.co'
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlya2ZybHZkZGt5anppdXZyaXNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEzNDk0NjgsImV4cCI6MjA2NjkyNTQ2OH0.5yUxCnz_kHlEMX7caL4dGsF22F6YKlVUDWUyIY6L_Cc'
+
+
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 export interface UserProfile {
@@ -144,12 +146,31 @@ export const authApi = {
   
   async signOut() {
     console.log('[Supabase] Attempting sign out')
-    const result = await supabase.auth.signOut()
-    console.log('[Supabase] Sign out result:', result.error ? 'ERROR' : 'SUCCESS')
-    if (result.error) {
-      console.error('[Supabase] Sign out error details:', result.error)
+    try {
+      // Perform the sign out which also clears the session
+      const result = await supabase.auth.signOut()
+      console.log('[Supabase] Sign out result:', result.error ? 'ERROR' : 'SUCCESS')
+      
+      if (result.error) {
+        console.error('[Supabase] Sign out error details:', result.error)
+      } else {
+        // Clear any persisted storage
+        const storageKeys = Object.keys(localStorage).filter(key => 
+          key.startsWith('sb-') || 
+          key.startsWith('supabase-') ||
+          key.includes('auth')
+        )
+        storageKeys.forEach(key => localStorage.removeItem(key))
+      }
+      
+      return result
+    } catch (error) {
+      console.error('[Supabase] Sign out error:', error)
+      // Even if there's an error, try to clear storage
+      localStorage.clear()
+      sessionStorage.clear()
+      throw error
     }
-    return result
   },
   
   async getCurrentUser() {
