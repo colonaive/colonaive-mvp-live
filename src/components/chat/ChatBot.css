@@ -1,0 +1,378 @@
+/* Floating Chat Icon (Toggle Button) */
+.chatbot-toggle-button {
+  position: fixed !important; /* Force fixed positioning */
+  bottom: 20px !important; /* Force bottom position */
+  right: 20px !important; /* Force right position */
+  left: auto !important; /* Explicitly ensure no left override */
+  transform: none !important; /* Reset any inherited transforms */
+
+  width: auto;
+  min-width: 140px;
+  max-width: 200px;
+  padding: 10px 15px;
+  border-radius: 30px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease-in-out, background-color 0.2s ease;
+  z-index: 1001; /* Ensure it's above other page content */
+  font-size: 1em;
+  font-weight: 600;
+  position: relative; /* Needed for positioning the callout */
+}
+
+.chatbot-toggle-button:hover {
+  transform: translateY(-2px); /* Keep local transform effect */
+  background-color: #0056b3;
+}
+
+.chatbot-toggle-button .chatbot-toggle-text {
+  /* No specific styling needed here, inherits from parent button */
+}
+
+/* Callout Message on Hover */
+.chatbot-callout {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%); /* Centering transform remains */
+  min-width: 220px;
+  max-width: 280px;
+  background-color: #34495e;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  z-index: 1002;
+  font-size: 0.9em;
+  line-height: 1.4;
+  text-align: center;
+  white-space: normal;
+}
+
+/* Arrow for the callout */
+.chatbot-callout::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid #34495e;
+}
+
+/* Show callout on button hover */
+.chatbot-toggle-button:hover .chatbot-callout {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%); /* Keep centering transform */
+}
+
+
+/* Main Chatbot Container Styling (when open) */
+.chatbot-container {
+  position: fixed !important; /* Force fixed positioning */
+  bottom: 20px !important;
+  right: 20px !important;
+  left: auto !important; /* Explicitly ensure no left override */
+  transform: none !important; /* Reset any inherited transforms */
+
+  width: 380px;
+  height: 520px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #dcdcdc;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  font-family: 'Arial', sans-serif;
+  background-color: #ffffff;
+  z-index: 1000;
+}
+
+/* Header Styling - Adjusted for subtle colors from original chatbot */
+.chatbot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #f3f6f9;
+  color: #34495e;
+  font-size: 1.1em;
+  font-weight: bold;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Logo and Assistant Title Container */
+.chatbot-logo-text {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Specific styling for the ColonaiveLogo component inside the header */
+.chatbot-logo-text .text-sm {
+  font-size: 0.85em;
+  font-weight: bold;
+  white-space: nowrap;
+}
+.chatbot-logo-text .text-black {
+  color: #34495e;
+}
+.chatbot-logo-text .text-teal-600 {
+  color: #20c997;
+}
+
+.assistant-title {
+  font-size: 1em;
+  font-weight: 600;
+  color: #34495e;
+}
+
+/* Close button styling */
+.chatbot-close-button {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.chatbot-close-button:hover {
+  background-color: #e0e0e0;
+}
+
+/* Messages Area Styling */
+.chatbot-messages {
+  flex-grow: 1;
+  padding: 15px 15px;
+  overflow-y: auto;
+  background-color: #fdfdfd;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Individual Message Bubble Styling */
+.message-bubble {
+  max-width: 85%;
+  padding: 10px 15px;
+  border-radius: 18px;
+  margin-bottom: 8px;
+  line-height: 1.4;
+  word-wrap: break-word;
+  font-size: 0.95em;
+}
+
+.message-bubble.user {
+  align-self: flex-end;
+  background-color: #e6f7ff;
+  color: #333;
+  border-top-right-radius: 5px;
+}
+
+.message-bubble.bot {
+  align-self: flex-start;
+  background-color: #ffffff;
+  color: #333;
+  border: 1px solid #e9ecef;
+  border-top-left-radius: 5px;
+}
+
+/* Specific Message Urgency Styling - adjusted for more subtle colors */
+.message-bubble.emergency {
+  background-color: #ffeaea;
+  border: 1px solid #ff7272;
+  color: #a70000;
+  font-weight: normal;
+}
+
+.message-bubble.urgent {
+  background-color: #fff9e6;
+  border: 1px solid #ffcc66;
+  color: #c98e00;
+}
+
+/* Disclaimer/Info Box Style (for welcome message disclaimer and other disclaimers) */
+.message-bubble .medical-disclaimer-box {
+  background-color: #f7f7f7;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 10px;
+  font-size: 0.9em;
+  color: #555;
+  border: 1px solid #eee;
+}
+
+/* Links within messages */
+.message-bubble a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.message-bubble a:hover {
+  text-decoration: underline;
+}
+
+/* List styling within bot messages */
+.message-bubble ul {
+  padding-left: 20px;
+  margin-top: 5px;
+  margin-bottom: 0;
+}
+
+.message-bubble ul li {
+  margin-bottom: 5px;
+}
+
+/* Typing Indicator */
+.typing {
+  background-color: #f0f4f7;
+  padding: 10px 15px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  align-self: flex-start;
+}
+
+.typing-indicator span {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background-color: #bbb;
+  border-radius: 50%;
+  margin: 0 2px;
+  animation: typing-bounce 0.6s infinite ease-in-out;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+@keyframes typing-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Input Area Styling */
+.chatbot-input-area {
+  display: flex;
+  padding: 10px 15px;
+  border-top: 1px solid #e0e0e0;
+  background-color: #ffffff;
+}
+
+.chatbot-input-area input {
+  flex-grow: 1;
+  padding: 10px 15px;
+  border: 1px solid #d9d9d9;
+  border-radius: 20px;
+  font-size: 0.95em;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.chatbot-input-area input:focus {
+  border-color: #007bff;
+}
+
+.chatbot-input-area button {
+  padding: 10px 18px;
+  margin-left: 8px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.95em;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.chatbot-input-area button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.chatbot-input-area button:disabled {
+  background-color: #a7d9ff;
+  cursor: not-allowed;
+}
+
+/* Scrollbar styling for WebKit browsers */
+.chatbot-messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chatbot-messages::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.chatbot-messages::-webkit-scrollbar-thumb {
+  background: #c5c5c5;
+  border-radius: 10px;
+}
+
+.chatbot-messages::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* Responsive Adjustments for Chatbot Window */
+@media (max-width: 600px) {
+  .chatbot-container {
+    width: calc(100% - 20px);
+    height: calc(100% - 20px);
+    bottom: 10px;
+    right: 10px;
+    border-radius: 10px;
+  }
+
+  .chatbot-toggle-button {
+    bottom: 10px;
+    right: 10px;
+    left: auto; /* Ensure it stays right on mobile too */
+    padding: 8px 12px;
+    font-size: 0.9em;
+    gap: 6px;
+    width: auto;
+    min-width: unset;
+    max-width: unset;
+  }
+  .chatbot-toggle-button svg {
+    width: 20px;
+    height: 20px;
+  }
+  .chatbot-callout {
+    font-size: 0.8em;
+    min-width: 180px;
+    padding: 8px 12px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .chatbot-callout::after {
+      left: 50%;
+      transform: translateX(-50%);
+  }
+}

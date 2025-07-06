@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes scroll-up {
+  0% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.animate-scroll-up {
+  animation: scroll-up 40s linear infinite;
+}
+
+/* Dropdown z-index fixes */
+/* Ensure dropdown menus always appear above everything */
+.relative.group > div[class*="z-[9999]"] {
+  z-index: 9999 !important;
+}
+
+/* Ensure the sticky header doesn't overlap dropdowns */
+div[style*="position: fixed"][style*="zIndex: 40"] {
+  z-index: 40 !important;
+}
+
+/* Additional safeguard for any dropdown menus */
+.relative.group > div[class*="absolute"] {
+  z-index: 9999 !important;
+}
+
+/* Specific fix for user menu dropdown */
+.relative.group > div.absolute.top-full {
+  z-index: 9999 !important;
+}
+
+/* Ensure the dropdown parent doesn't clip */
+.relative.group {
+  z-index: 100;
+}
