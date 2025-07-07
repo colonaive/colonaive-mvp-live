@@ -370,18 +370,19 @@ const CorporateSignUp: React.FC = () => {
       console.log('🏢 Creating corporate account...');
       const { error: setupError } = await supabase.rpc('create_full_corporate_account', {
           p_contact_user_id: data.user.id,
-          p_contact_user_email: formData.email.trim().toLowerCase(),
+          // p_contact_user_email: formData.email.trim().toLowerCase(),
           p_company_name: formData.companyName.trim(),
           p_uen: formData.uen.trim(),
           p_industry: formData.industry,
           p_company_size: formData.companySize,
-          p_contact_person_name: formData.contactPerson.trim(),
-          p_phone_number: formData.phone.trim(),
-          p_pledge_amount: formData.pledgeAmount ? Number(formData.pledgeAmount) : null,
-            user_type: 'corporate_contact', 
-          p_csr_options: formData.csrOptions,
-          emailRedirectTo: 'https://www.colonaive.ai/login?verified=true',
-          p_additional_comments: formData.additionalComments.trim() || null
+          designation: formData.designation,
+          // p_contact_person_name: formData.contactPerson.trim(),
+          // p_phone_number: formData.phone.trim(),
+          // p_pledge_amount: formData.pledgeAmount ? Number(formData.pledgeAmount) : null,
+          //   user_type: 'corporate_contact', 
+          // p_csr_options: formData.csrOptions,
+          // emailRedirectTo: 'https://www.colonaive.ai/login?verified=true',
+          // p_additional_comments: formData.additionalComments.trim() || null
       });
 
       if (setupError) {
