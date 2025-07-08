@@ -171,7 +171,7 @@ const ReferFriendForm: React.FC = () => {
             <div className="space-y-6">
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Button size="lg" onClick={() => { setSuccess(false); setError(null); }}>Refer More Friends</Button>
-                <Button size="lg" variant="outline" onClick={() => navigate('/dashboard/champion')}>Back to Dashboard</Button>
+                <Button size="lg" variant="outline" onClick={() => navigate(-1)}>Back to Dashboard</Button>
               </div>
 
               <div className="pt-6 border-t">

@@ -184,7 +184,7 @@ export const Header = () => {
       const dashboardPath = getDashboardRoute(userType);
 
       let profileSettingsPath = '/profile/champion';
-      if (userType === 'GPClinic') {
+      if (userType === 'gpclinic') {
         profileSettingsPath = '/profile/gp-clinic';
       } else if (userType === 'specialist') {
         profileSettingsPath = '/profile/specialist';

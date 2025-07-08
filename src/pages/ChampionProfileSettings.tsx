@@ -138,7 +138,7 @@ const ChampionProfileSettings: React.FC = () => {
     <div className="bg-gradient-to-br from-blue-50 via-sky-50 to-gray-100 min-h-screen py-8 md:py-12">
       <Container className="max-w-3xl mx-auto">
         <div className="mb-8">
-          <Button variant="outline" onClick={() => navigate('/dashboard/champion')} className="flex items-center text-gray-700 hover:text-blue-700 mb-6">
+          <Button variant="outline" onClick={() => navigate(-1)} className="flex items-center text-gray-700 hover:text-blue-700 mb-6">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Dashboard
           </Button>

@@ -228,7 +228,7 @@ const SpecialistProfileSettings: React.FC = () => {
     <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-gray-100 min-h-screen py-8 md:py-12">
       <Container className="max-w-5xl mx-auto">
         <div className="mb-8">
-            <Button variant="outline" onClick={() => navigate(getDashboardRoute(userType))} className="flex items-center text-gray-700 hover:text-indigo-700 mb-6">
+            <Button variant="outline" onClick={() => navigate(-1)} className="flex items-center text-gray-700 hover:text-indigo-700 mb-6">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Dashboard
             </Button>
