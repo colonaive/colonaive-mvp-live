@@ -150,6 +150,8 @@ const MainRoutes = () => {
           <Route path="/pillars/rid-crc-csr" element={<RIDCRCCSRPage />} />
           <Route path="/pillars/rid-crc-edu" element={<RIDCRCEDUPage />} />
           <Route path="/clinical-trials" element={<ClinicalTrialsPage />} />
+          <Route path="/find-specialist" element={<FindSpecialistPage />} />
+          <Route path="/pillars/RIDCRCPUB" element={<RIDCRCPUBPage />} />
           
           {/* Auth & Registration */}
           <Route path="/signup/champion" element={<ChampionSignUp />} />
