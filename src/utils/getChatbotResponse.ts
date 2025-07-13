@@ -1,5 +1,5 @@
 // src/utils/getChatbotResponse.ts
-export interface ChatbotResponse {
+interface ChatbotApiResponse {
   reply: string;
   isMocked?: boolean;
   note?: string;
@@ -7,23 +7,22 @@ export interface ChatbotResponse {
   details?: string;
 }
 
-export interface ChatbotRequest {
-  prompt: string;
-  useMock?: boolean;
+interface ChatbotResult {
+  response: string;
+  isMocked?: boolean;
+  error?: string;
 }
 
 const SUPABASE_FUNCTION_URL = "https://irkfrlvddkyjziuvrisb.supabase.co/functions/v1/chatbot";
-const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz..."; // Your anon key
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz..."; // Replace with your actual anon key
 
 export async function getChatbotResponse(
-  prompt: string, 
-  options: { useMock?: boolean; timeout?: number } = {}
-): Promise<ChatbotResponse> {
-  const { useMock = false, timeout = 10000 } = options;
-
+  message: string, 
+  conversationHistory: string[] = []
+): Promise<ChatbotResult> {
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    console.log("Sending message to chatbot:", message);
+    console.log("With history:", conversationHistory);
 
     const response = await fetch(SUPABASE_FUNCTION_URL, {
       method: "POST",
@@ -32,41 +31,105 @@ export async function getChatbotResponse(
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        prompt,
-        useMock
-      } as ChatbotRequest),
-      signal: controller.signal,
+        prompt: message,
+        conversationHistory: conversationHistory,
+        useMock: true // You can change this to false when you want to use real OpenAI
+      }),
     });
-
-    clearTimeout(timeoutId);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const data: ChatbotResponse = await response.json();
-    return data;
-
-  } catch (error) {
-    console.error("Error calling chatbot:", error);
+    const data: ChatbotApiResponse = await response.json();
     
-    if (error instanceof Error) {
-      if (error.name === 'AbortError') {
-        return {
-          reply: "Request timed out. Please try again.",
-          error: "timeout"
-        };
-      }
-      
+    if (data.error) {
       return {
-        reply: "Sorry, I'm having trouble responding right now. Please try again later.",
-        error: error.message
+        response: "Sorry, I'm having trouble responding right now. Please try again later.",
+        error: data.error
       };
     }
 
     return {
-      reply: "An unexpected error occurred.",
-      error: "unknown"
+      response: data.reply,
+      isMocked: data.isMocked,
+      error: undefined
+    };
+
+  } catch (error) {
+    console.error("Error calling chatbot:", error);
+    
+    // Fallback response with local knowledge
+    const fallbackResponse = getFallbackResponse(message);
+    
+    return {
+      response: fallbackResponse,
+      error: error instanceof Error ? error.message : "Unknown error",
+      isMocked: true
+    };
+  }
+}
+
+// Fallback responses when API fails
+function getFallbackResponse(message: string): string {
+  const lowerMessage = message.toLowerCase();
+  
+  if (lowerMessage.includes('early signs') || lowerMessage.includes('symptoms')) {
+    return `Early signs of colorectal cancer may include: changes in bowel habits, blood in stool, persistent abdominal discomfort, unexplained weight loss, and fatigue. However, many of these symptoms can have other causes, so it's important to consult with a healthcare provider for proper evaluation. 👉 https://www.colonaive.ai/get-screened`;
+  }
+  
+  if (lowerMessage.includes('colonoscopy')) {
+    return `A colonoscopy is the gold standard for colorectal cancer detection because it allows direct visual examination and immediate polyp removal. If you're scared or uncomfortable, there are now HSA-cleared blood tests available in Singapore as a first step. 👉 https://www.colonaive.ai/get-screened`;
+  }
+  
+  if (lowerMessage.includes('screen') || lowerMessage.includes('test')) {
+    return `In Singapore, you have several screening options including HSA-cleared blood tests, FIT tests, and colonoscopy. Blood-based tests are non-invasive and great for those who feel uncomfortable with other methods. 👉 https://www.colonaive.ai/get-screened`;
+  }
+  
+  if (lowerMessage.includes('scared') || lowerMessage.includes('afraid') || lowerMessage.includes('mafan')) {
+    return `Don't worry, Champion! Many Singaporeans feel the same way. There are now easier, non-invasive blood tests available that are HSA-cleared. Better to check early than wait for problems. 👉 https://www.colonaive.ai/get-screened`;
+  }
+  
+  return `I'm here to help with colorectal cancer awareness and support, Champion! I can share info about symptoms, screening options, prevention, and local resources in Singapore. What would you like to know? 👉 https://www.colonaive.ai/get-screened`;
+}
+
+// Alternative function if you want to use OpenAI directly (bypass Supabase)
+export async function getChatbotResponseDirect(
+  message: string, 
+  conversationHistory: string[] = []
+): Promise<ChatbotResult> {
+  try {
+    // This would call your src/api/chat.ts endpoint if you set up Express
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message,
+        history: conversationHistory
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    return {
+      response: data.reply,
+      isMocked: false,
+      error: undefined
+    };
+
+  } catch (error) {
+    console.error("Error calling OpenAI directly:", error);
+    
+    return {
+      response: getFallbackResponse(message),
+      error: error instanceof Error ? error.message : "Unknown error",
+      isMocked: true
     };
   }
 }
