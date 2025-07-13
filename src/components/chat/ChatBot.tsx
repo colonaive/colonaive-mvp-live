@@ -1,6 +1,7 @@
 // src/components/chat/ChatBot.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import { getChatbotResponse } from '../../utils/getChatbotResponse';
+import { parseLinksInText } from '../../utils/linkParser'; // Import the link parser
 import { MessageSquare, X } from 'lucide-react';
 import './ChatBot.css';
 
@@ -238,7 +239,15 @@ const ChatBot: React.FC = () => {
                   })
                 }}
               >
-                <p style={{ margin: 0, lineHeight: 1.4 }}>{msg.text}</p>
+                {/* UPDATED: Parse links in bot messages */}
+                {msg.sender === 'bot' ? (
+                  <div style={{ margin: 0, lineHeight: 1.4 }}>
+                    {parseLinksInText(msg.text)}
+                  </div>
+                ) : (
+                  <p style={{ margin: 0, lineHeight: 1.4 }}>{msg.text}</p>
+                )}
+                
                 {msg.timestamp && (
                   <div style={{
                     fontSize: '10px',
