@@ -35,41 +35,36 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    async function loadUser() {
-      try {
-        console.log('[AuthContext] Loading initial user...')
-        const { data: { user } } = await supabase.auth.getUser()
-        console.log('[AuthContext] Initial user:', user?.email || 'none')
-        setUser(user)
-        
-        if (user) {
-          await loadUserProfile(user.id)
-        }
-      } catch (error) {
-        console.error('[AuthContext] Error loading user:', error)
-      } finally {
-        setLoading(false)
-      }
+useEffect(() => {
+  async function loadUser() {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      setUser(user)
+      if (user) await loadUserProfile(user.id)
+    } catch (error) {
+      console.error('[AuthContext] Error loading user:', error)
+    } finally {
+      setLoading(false)
     }
-    
-    loadUser()
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('[AuthContext] Auth state change:', event, session?.user?.email || 'none')
-        setUser(session?.user || null)
-        
-        if (session?.user) { 
+  }
+  loadUser()
+ 
+  const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    (event, session) => {
+      setUser(session?.user || null)
+      setTimeout(async () => {
+        if (session?.user) {
           await loadUserProfile(session.user.id)
         } else {
           setProfile(null)
         }
-        
         setLoading(false)
-      }
-    )
-    return () => subscription.unsubscribe()
-  }, [])
+      }, 0)
+    }
+  )
+ 
+  return () => subscription.unsubscribe()
+}, [])
 
   async function loadUserProfile(userId: string) {
     try {
